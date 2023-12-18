@@ -3,16 +3,21 @@ using OpenQA.Selenium;
 using System.IO;
 using System.Reflection;
 using Xunit;
+using System.Collections.Generic;
+using Xunit.Abstractions;
+using System.Linq;
 
 namespace Alura.ByteBank.WebApp.Testes
 {
 	public class AposRealizarLogin
 	{
 		private IWebDriver driver;
+		public ITestOutputHelper output;
 
-		public AposRealizarLogin()
+		public AposRealizarLogin(ITestOutputHelper output)
 		{
 			driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			this.output = output;
 		}
 
 		[Fact]
@@ -104,5 +109,40 @@ namespace Alura.ByteBank.WebApp.Testes
 			// Assert
 			Assert.Contains("Logout", driver.PageSource);
 		}
+
+		[Fact]
+		public void RealizarLoginAcessaListagemDeContas()
+		{
+			// Arrange
+			driver.Navigate().GoToUrl("https://localhost:44309/UsuarioApps/Login");
+
+			var login = driver.FindElement(By.Name("Email"));
+			var senha = driver.FindElement(By.Name("Senha"));
+
+			login.SendKeys("andre@email.com");
+			senha.SendKeys("senha01");
+
+			driver.FindElement(By.CssSelector(".btn")).Click();
+
+			driver.FindElement(By.Id("contacorrente")).Click();
+
+			IReadOnlyCollection<IWebElement> elements = driver.FindElements(By.TagName("a"));
+
+            foreach (var element in elements)
+            {
+				output.WriteLine(element.Text);
+            }
+
+			var elemento = (from webElemento in elements
+							where webElemento.Text.Contains("Detalhes")
+							select webElemento).FirstOrDefault();
+
+			// Act
+			elemento.Click();
+
+			// Assert
+			//Assert.True(elements.Count == 12);
+			Assert.Contains("Voltar", driver.PageSource);
+        }
 	}
 }
