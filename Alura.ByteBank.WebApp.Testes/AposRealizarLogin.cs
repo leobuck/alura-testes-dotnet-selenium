@@ -6,6 +6,7 @@ using Xunit;
 using System.Collections.Generic;
 using Xunit.Abstractions;
 using System.Linq;
+using Alura.ByteBank.WebApp.Testes.PageObjects;
 
 namespace Alura.ByteBank.WebApp.Testes
 {
@@ -24,17 +25,12 @@ namespace Alura.ByteBank.WebApp.Testes
 		public void AposRealizarLoginVerificaSeExisteOpcaoAgenciaMenu()
 		{
 			// Arrange
-			driver.Navigate().GoToUrl("https://localhost:44309/UsuarioApps/Login");
-
-			var login = driver.FindElement(By.Id("Email"));
-			var senha = driver.FindElement(By.Id("Senha"));
-			var btnLogar = driver.FindElement(By.Id("btn-logar"));
-
-			login.SendKeys("andre@email.com");
-			senha.SendKeys("senha01");
+			var loginPO = new LoginPO(driver);
+			loginPO.Navegar("https://localhost:44309/UsuarioApps/Login");
 
 			// Act
-			btnLogar.Click();
+			loginPO.PreencherCampos("andre@email.com", "senha01");
+			loginPO.Logar();
 
 			// Assert
 			Assert.Contains("Agência", driver.PageSource);
