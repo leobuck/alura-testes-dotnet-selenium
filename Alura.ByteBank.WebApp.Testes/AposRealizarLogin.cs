@@ -78,22 +78,17 @@ namespace Alura.ByteBank.WebApp.Testes
 			loginPO.PreencherCampos("andre@email.com", "senha01");
 			loginPO.Logar();
 
-			driver.FindElement(By.LinkText("Cliente")).Click();
+			var homePO = new HomePO(driver);
+			homePO.LinkClientesClick();
 
-			driver.FindElement(By.LinkText("Adicionar Cliente")).Click();
-
-			driver.FindElement(By.Name("Identificador")).Click();
-			driver.FindElement(By.Name("Identificador")).SendKeys("53c537e0-efd8-4101-ab99-2e61f0b3bcb1");
-			driver.FindElement(By.Name("CPF")).Click();
-			driver.FindElement(By.Name("CPF")).SendKeys("69981034096");
-			driver.FindElement(By.Name("Nome")).Click();
-			driver.FindElement(By.Name("Nome")).SendKeys("Tobey Garfield");
-			driver.FindElement(By.Name("Profissao")).Click();
-			driver.FindElement(By.Name("Profissao")).SendKeys("Cientista");
+			var clientePO = new ClientePO(driver);
+			clientePO.AdicionarCliente();
+			clientePO.PreencherCampos("53c537e0-efd8-4101-ab99-2e61f0b3bcb1", 
+				"69981034096", "Tobey Garfield", "Cientista");
 
 			// Act
-			driver.FindElement(By.CssSelector(".btn-primary")).Click();
-			driver.FindElement(By.LinkText("Home")).Click();
+			clientePO.Salvar();
+			clientePO.VaiParaHome();
 
 			// Assert
 			Assert.Contains("Logout", driver.PageSource);

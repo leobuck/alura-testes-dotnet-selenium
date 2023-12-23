@@ -26,7 +26,6 @@ namespace Alura.ByteBank.WebApp.Testes.PageObjects
 		{
 			driver.FindElement(campoEmail).SendKeys(email);
 			driver.FindElement(campoSenha).SendKeys(senha);
-			
 		}
 
 		public void Logar()
