@@ -1,12 +1,12 @@
-﻿using OpenQA.Selenium.Chrome;
+﻿using Alura.ByteBank.WebApp.Testes.PageObjects;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Xunit;
-using System.Collections.Generic;
 using Xunit.Abstractions;
-using System.Linq;
-using Alura.ByteBank.WebApp.Testes.PageObjects;
 
 namespace Alura.ByteBank.WebApp.Testes
 {
@@ -40,12 +40,12 @@ namespace Alura.ByteBank.WebApp.Testes
 		public void TentaRealizarLoginSemPreencherCampos()
 		{
 			// Arrange
-			driver.Navigate().GoToUrl("https://localhost:44309/UsuarioApps/Login");
-
-			var btnLogar = driver.FindElement(By.Id("btn-logar"));
+			var loginPO = new LoginPO(driver);
+			loginPO.Navegar("https://localhost:44309/UsuarioApps/Login");
 
 			// Act
-			btnLogar.Click();
+			loginPO.PreencherCampos("", "");
+			loginPO.Logar();
 
 			// Assert
 			Assert.Contains("The Email field is required.", driver.PageSource);
@@ -56,17 +56,12 @@ namespace Alura.ByteBank.WebApp.Testes
 		public void TentaRealizarLoginComSenhaInvalida()
 		{
 			// Arrange
-			driver.Navigate().GoToUrl("https://localhost:44309/UsuarioApps/Login");
-
-			var login = driver.FindElement(By.Id("Email"));
-			var senha = driver.FindElement(By.Id("Senha"));
-			var btnLogar = driver.FindElement(By.Id("btn-logar"));
-
-			login.SendKeys("andre@email.com");
-			senha.SendKeys("senha010");
+			var loginPO = new LoginPO(driver);
+			loginPO.Navegar("https://localhost:44309/UsuarioApps/Login");
 
 			// Act
-			btnLogar.Click();
+			loginPO.PreencherCampos("andre@email.com", "senha010");
+			loginPO.Logar();
 
 			// Assert
 			Assert.Contains("Login", driver.PageSource);
@@ -75,15 +70,12 @@ namespace Alura.ByteBank.WebApp.Testes
 		[Fact]
 		public void RealizarLoginAcessaMenuECadastraCliente()
 		{
-			driver.Navigate().GoToUrl("https://localhost:44309/UsuarioApps/Login");
+			// Arrange
+			var loginPO = new LoginPO(driver);
+			loginPO.Navegar("https://localhost:44309/UsuarioApps/Login");
 
-			var login = driver.FindElement(By.Name("Email"));
-			var senha = driver.FindElement(By.Name("Senha"));
-
-			login.SendKeys("andre@email.com");
-			senha.SendKeys("senha01");
-
-			driver.FindElement(By.CssSelector(".btn")).Click();
+			loginPO.PreencherCampos("andre@email.com", "senha01");
+			loginPO.Logar();
 
 			driver.FindElement(By.LinkText("Cliente")).Click();
 
@@ -110,17 +102,14 @@ namespace Alura.ByteBank.WebApp.Testes
 		public void RealizarLoginAcessaListagemDeContas()
 		{
 			// Arrange
-			driver.Navigate().GoToUrl("https://localhost:44309/UsuarioApps/Login");
+			var loginPO = new LoginPO(driver);
+			loginPO.Navegar("https://localhost:44309/UsuarioApps/Login");
 
-			var login = driver.FindElement(By.Name("Email"));
-			var senha = driver.FindElement(By.Name("Senha"));
+			loginPO.PreencherCampos("andre@email.com", "senha01");
+			loginPO.Logar();
 
-			login.SendKeys("andre@email.com");
-			senha.SendKeys("senha01");
-
-			driver.FindElement(By.CssSelector(".btn")).Click();
-
-			driver.FindElement(By.Id("contacorrente")).Click();
+			var homePO = new HomePO(driver);
+			homePO.LinkContaCorrentesClick();
 
 			IReadOnlyCollection<IWebElement> elements = driver.FindElements(By.TagName("a"));
 
