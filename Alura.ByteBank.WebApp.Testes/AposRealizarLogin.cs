@@ -1,23 +1,24 @@
 ﻿using Alura.ByteBank.WebApp.Testes.PageObjects;
+using Alura.ByteBank.WebApp.Testes.Utils;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Alura.ByteBank.WebApp.Testes
 {
-	public class AposRealizarLogin
+	public class AposRealizarLogin : IClassFixture<Gerenciador>
 	{
 		private IWebDriver driver;
 		public ITestOutputHelper output;
 
-		public AposRealizarLogin(ITestOutputHelper output)
+		public AposRealizarLogin(
+			Gerenciador gerenciador,
+			ITestOutputHelper output
+		)
 		{
-			driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			driver = gerenciador.Driver;
 			this.output = output;
 		}
 
